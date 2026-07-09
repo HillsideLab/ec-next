@@ -2,14 +2,19 @@ import type { Metadata } from "next";
 import { Inter, Geist } from "next/font/google";
 import "@/assets/styles/globals.css";
 import { cn } from "@/lib/utils";
+import { APP_NAME, APP_DESCRIPTION, SERVER_URL } from "@/lib/constants";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({subsets:['latin']});
 
 export const metadata: Metadata = {
-  title: "ec-next",
-  description: "A modern ecommerce platform built with Next.js",
+  title: {
+    template: `%s | ec-next`,
+    default: APP_NAME,
+  },
+  description: `${APP_DESCRIPTION}`,
+  metadataBase: new URL(SERVER_URL),
 };
 
 export default function RootLayout({
