@@ -98,12 +98,6 @@
   }
 }
 
-@layer base {
-  body {
-    @apply bg-white text-black;
-  }
-}
-
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);

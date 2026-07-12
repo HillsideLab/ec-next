@@ -4,6 +4,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { APP_NAME } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import ModeToggle from "@/components/shared/header/mode-toggle";
 
 const Header = () => {
   return (
@@ -24,6 +25,7 @@ const Header = () => {
           </Link>
         </div>
         <div className="space-x-2">
+          <ModeToggle />
           <Link
             href="/cart"
             className={cn(buttonVariants({ variant: "ghost" }))}
@@ -31,10 +33,7 @@ const Header = () => {
             <ShoppingCart />
             Cart
           </Link>
-          <Link
-            href="/sign-in"
-            className={cn(buttonVariants({ variant: "ghost" }))}
-          >
+          <Link href="/sign-in" className={cn(buttonVariants())}>
             <UserIcon />
             Sign In
           </Link>
