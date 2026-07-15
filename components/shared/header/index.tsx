@@ -1,10 +1,7 @@
-import { ShoppingCart, UserIcon } from "lucide-react";
+import Menu from "./menu";
 import Image from "next/image";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
 import { APP_NAME } from "@/lib/constants";
-import { cn } from "@/lib/utils";
-import ModeToggle from "@/components/shared/header/mode-toggle";
 
 const Header = () => {
   return (
@@ -24,20 +21,7 @@ const Header = () => {
             </span>
           </Link>
         </div>
-        <div className="space-x-2">
-          <ModeToggle />
-          <Link
-            href="/cart"
-            className={cn(buttonVariants({ variant: "ghost" }))}
-          >
-            <ShoppingCart />
-            Cart
-          </Link>
-          <Link href="/sign-in" className={cn(buttonVariants())}>
-            <UserIcon />
-            Sign In
-          </Link>
-        </div>
+        <Menu />
       </div>
     </header>
   );
