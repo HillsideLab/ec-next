@@ -4,7 +4,7 @@ import { formatNumberWithDecimal } from "./utils";
 const currency = z
     .string()
     .refine((value)=>/^\d+(\.\d{2})?$/.test(formatNumberWithDecimal(Number(value))),
-    'Price mus have exactly two decimal places');
+    'Price must have exactly two decimal places');
 
 //Schema fo inserting products
 export const insertProductSchema = z.object({
