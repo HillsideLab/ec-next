@@ -25,7 +25,6 @@ const SignInButton = () => {
 };
 
 const CredentialsSignInForm = () => {
-  console.log("dddd");
   const [data, action] = useActionState(signInWithCredentials, {
     success: false,
     message: "",

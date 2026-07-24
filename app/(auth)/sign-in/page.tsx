@@ -19,7 +19,6 @@ export const metadata: Metadata = {
 };
 
 const SignInPage = async () => {
-  console.log("xxxxxxx");
   const session = await auth.api.getSession({
     headers: await headers(),
   });
