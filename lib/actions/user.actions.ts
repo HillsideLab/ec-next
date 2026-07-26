@@ -4,6 +4,7 @@ import { signInFormSchema } from "../validators";
 import { auth } from "@/lib/auth";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 // Sign in the user with credentials
 export async function signInWithCredentials(prevState: unknown, formData: FormData){
@@ -19,7 +20,8 @@ export async function signInWithCredentials(prevState: unknown, formData: FormDa
                 password:user.password
             }
         })
-        return {success: true, message: 'Signed in successfully'};
+        redirect('/');
+
     } catch(error){
         if(isRedirectError(error)){
             throw error;
