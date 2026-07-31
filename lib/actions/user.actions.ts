@@ -20,7 +20,9 @@ export async function signInWithCredentials(prevState: unknown, formData: FormDa
                 password:user.password
             }
         })
-        redirect('/');
+
+        const callbackUrl = formData.get("callbackUrl");
+        redirect(typeof callbackUrl === 'string' && callbackUrl ? callbackUrl : '/');
 
     } catch(error){
         if(isRedirectError(error)){
