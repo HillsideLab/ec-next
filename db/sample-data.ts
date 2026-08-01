@@ -3,13 +3,13 @@ const sampleData = {
   {
     name: 'John',
     email:  'admin@example.com',
-    password: '123456',
+    password: 'admin1234',
     role: 'admin'
   },
   {
     name: 'Jane',
     email:  'user@example.com',
-    password: '123456',
+    password: 'user1234',
     role: 'user'
   },
 

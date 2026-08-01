@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { formatError } from "../utils";
 
 // Sign in the user with credentials
 export async function signInWithCredentials(prevState: unknown, formData: FormData){
@@ -64,6 +65,6 @@ export async function signUpUser(prevState: unknown, formData: FormData){
         if (isRedirectError(error)) {
             throw error;
         }
-        return { success: false, message: 'User was not registered' };
+        return { success: false, message: formatError(error) };
     }
 }
