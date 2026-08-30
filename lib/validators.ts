@@ -46,7 +46,7 @@ export const cartItemSchema = z.object({
     qty: z.number().int().nonnegative('Quantity must be a positive number'),
     image: z.string().min(1, 'Image is required'),
     price: currency
-}) 
+})
 
 export const insertCartSchema =z.object({
     items: z.array(cartItemSchema),
