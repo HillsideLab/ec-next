@@ -2,7 +2,7 @@ import {PrismaClient} from '@/lib/generated/prisma/client';
 import sampleData from "./sample-data";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
-import { auth } from '@/lib/auth'; 
+import { auth } from '@/lib/auth';
 import { randomUUID } from 'crypto';
 
 async function main(){
