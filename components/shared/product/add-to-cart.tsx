@@ -12,6 +12,14 @@ const AddToCart = ({ item }:{ item: CartItem }) => {
     const handleAddToCart = async () =>{
         const res = await addItemToCart(item);
 
+        if (!res) {
+            toast.add({
+                type: "error",
+                description: "Something went wrong. Please try again.",
+            });
+            return;
+        }
+
         if(!res.success){
             toast.add({
                 type: "error",
