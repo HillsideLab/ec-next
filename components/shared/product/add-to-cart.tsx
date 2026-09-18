@@ -30,7 +30,7 @@ const AddToCart = ({ item }:{ item: CartItem }) => {
 
         // Handle success add to cart
         const id = toast.add({
-            description: `${item.name} added to cart`,
+            description: res.message,
             actionProps: {
                 children: "Go To Cart",
                 className:
