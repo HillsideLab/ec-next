@@ -3,12 +3,11 @@
 import { shippingAddressSchema, signInFormSchema, signUpFormSchema} from "../validators";
 import { auth } from "@/lib/auth";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { formatError } from "../utils";
 import { prisma } from "@/db/prisma";
 import { ShippingAddress } from "@/types";
-import { success } from "zod";
 
 // Sign in the user with credentials
 export async function signInWithCredentials(prevState: unknown, formData: FormData){
@@ -22,7 +21,8 @@ export async function signInWithCredentials(prevState: unknown, formData: FormDa
             body:{
                 email:user.email,
                 password:user.password
-            }
+            },
+            headers: await headers(),
         })
 
         const callbackUrl = formData.get("callbackUrl");
@@ -32,7 +32,7 @@ export async function signInWithCredentials(prevState: unknown, formData: FormDa
         if(isRedirectError(error)){
             throw error;
         }
-        return { success: false, message: 'Invalid email or password'}
+        return { success: false, message: formatError(error) };
     }
 }
 
@@ -41,6 +41,10 @@ export async function signOutUser() {
     await auth.api.signOut({
         headers: await headers(),
     });
+
+    // 次にこのブラウザを使う人に、前の人のカートが引き継がれないよう
+    // 新しい sessionCartId を即座に発行し直す
+    (await cookies()).set('sessionCartId', crypto.randomUUID());
 }
 
 //Sign up user
@@ -58,7 +62,8 @@ export async function signUpUser(prevState: unknown, formData: FormData){
                 name: user.name,
                 email: user.email,
                 password: user.password,
-            }
+            },
+            headers: await headers(),
         });
 
         const callbackUrl = formData.get("callbackUrl");
