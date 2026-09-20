@@ -6,10 +6,11 @@ import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { formatError } from "../utils";
+import { prisma } from "@/db/prisma";
 
 // Sign in the user with credentials
 export async function signInWithCredentials(prevState: unknown, formData: FormData){
-    try{    
+    try{
         const user = signInFormSchema.parse({
             email: formData.get('email'),
             password: formData.get('password'),
@@ -17,7 +18,7 @@ export async function signInWithCredentials(prevState: unknown, formData: FormDa
 
         await auth.api.signInEmail({
             body:{
-                email:user.email, 
+                email:user.email,
                 password:user.password
             }
         })
@@ -47,7 +48,7 @@ export async function signUpUser(prevState: unknown, formData: FormData){
             name: formData.get('name'),
             email: formData.get('email'),
             password: formData.get('password'),
-            confirmPassword: formData.get('confirmPassword'), 
+            confirmPassword: formData.get('confirmPassword'),
         })
 
         await auth.api.signUpEmail({
@@ -67,4 +68,13 @@ export async function signUpUser(prevState: unknown, formData: FormData){
         }
         return { success: false, message: formatError(error) };
     }
+}
+
+// Get user by the ID
+export async function getUserByID(userId: string){
+    const user = await prisma.user.findFirst({
+        where: {id: userId}
+    })
+    if(!user) throw new Error('User not found');
+    return user;
 }
