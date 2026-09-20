@@ -5,6 +5,7 @@ import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { ShippingAddress } from '@/types';
 import { headers } from "next/headers";
+import  ShippingAddressForm  from './shipping-address-form';
 
 
 export const metadata: Metadata = {
@@ -23,9 +24,11 @@ const ShippingAddressPage = async() => {
 
     if(!userId) throw new Error('No user ID');
 
-    const user = getUserByID(userId);
+    const user = await getUserByID(userId);
 
-    return ( <>Address</> );
+    return (<>
+    <ShippingAddressForm address={user.address as ShippingAddress}/>
+    </>) ;
 }
 
 export default ShippingAddressPage;
