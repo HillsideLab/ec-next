@@ -1,4 +1,5 @@
 export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || 'ec-next';
+export const COMPANY_NAME = process.env.COMPANY_NAME || 'ENCINA Co., Ltd.';
 export const APP_DESCRIPTION = process.env.NEXXT_PUBLIC_APP_DESCRIPTION || 'A modern ecommerce platform built with Next.js';
 export const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000';
 export const LATEST_PRODUCTS_LIMIT = Number(process.env.LATEST_PRODUCTS_LIMIT) || 8;
