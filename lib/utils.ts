@@ -77,3 +77,11 @@ export function formatCurrency(amount: number | string | null){
     return 'NaN';
   }
 }
+
+// Shorten UUID
+export function formatId(id: string) {
+  return `..${id.substring(id.length - 6)}`
+}
+
+// Format date and times
+// TODO: Add date/time formatter before displaying order dates.
