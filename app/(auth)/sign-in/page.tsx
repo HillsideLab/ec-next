@@ -51,6 +51,29 @@ const SignInPage = async (props: {
         </CardHeader>
         <CardContent className="space-y-4">
           <CredentialsSignInForm />
+          {/* for Demo User */}
+          <div className="rounded-lg border border-[#FFCA28]/50 bg-[#FFCA28]/10 p-4">
+            <p className="text-center text-sm font-semibold text-[#B77900]">
+              Demo Account
+            </p>
+            <p className="mt-1 text-center text-xs text-[#B77900]">
+              Explore the full purchase flow with this demo account.
+            </p>
+            <div className="mt-3 space-y-1 text-center text-sm text-muted-foreground">
+              <p>
+                Email:{" "}
+                <span className="font-medium text-foreground">
+                  demo@example.com
+                </span>
+              </p>
+              <p>
+                Password:{" "}
+                <span className="font-medium text-foreground">
+                  EcNextDemo2026!
+                </span>
+              </p>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
