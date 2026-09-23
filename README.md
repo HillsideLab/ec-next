@@ -40,6 +40,7 @@ The platform is designed with real-world cross-border e-commerce between **Europ
 
 ## ✨ Key Features
 
+- 🛍️ **Complete E-commerce Shopping Flow:** A complete shopping experience covering **product listing, product details, cart management, checkout, order placement, and order details**.
 - 🔐 **Secure Authentication:** Cookie-based session management with `better-auth`, combined with Edge Middleware for automatic redirection and route protection.
 - 🛒 **High-performance Cart System:** Asynchronous UI updates using `useTransition`, with session persistence and accurate subtotal calculations.
 - 📝 **Robust Form Validation:** `React Hook Form` and `Zod` are used together for consistent validation on both the client side and inside `Server Actions`.
