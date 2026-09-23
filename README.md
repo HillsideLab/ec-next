@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ec-next 🛒
 
-## Getting Started
+A modern, robust full-stack e-commerce platform built with **Next.js 16 (App Router)** and **React 19**.
 
-First, run the development server:
+The platform is designed with real-world cross-border e-commerce between **Europe and Japan** in mind, with a strong focus on **performance, security, and user experience (UX)**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+🚀 **Live Demo:** [ec-next-one.vercel.app](https://ec-next-one.vercel.app)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+🔑 **Demo Account:**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Email:** `demo@example.com`
+- **Password:** `EcNextDemo2026!`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+> After signing in, you can experience the complete shopping flow, from browsing products and adding items to the cart to checkout and order placement.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Frontend / Backend
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Framework:** Next.js 16 (App Router)
+- **Library:** React 19 / TypeScript
+- **Styling:** Tailwind CSS v4
+- **UI Components:** shadcn/ui (Base UI)
+- **Theme:** next-themes (Light / Dark mode)
 
-## Deploy on Vercel
+### Database / Authentication / Security
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Database / ORM:** PostgreSQL (Neon) / Prisma ORM
+- **Authentication:** better-auth with Edge Middleware-based session verification
+- **Password Hashing:** bcrypt-ts-edge
+- **Forms & Validation:** React Hook Form × Zod
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Infrastructure / CI/CD
+
+- **Hosting:** Vercel
+
+---
+
+## ✨ Key Features
+
+- 🔐 **Secure Authentication:** Cookie-based session management with `better-auth`, combined with Edge Middleware for automatic redirection and route protection.
+- 🛒 **High-performance Cart System:** Asynchronous UI updates using `useTransition`, with session persistence and accurate subtotal calculations.
+- 📝 **Robust Form Validation:** `React Hook Form` and `Zod` are used together for consistent validation on both the client side and inside `Server Actions`.
+- 📦 **Checkout Progress:** A step-based checkout UI clearly guides users through the purchasing process: **Shipping Address → Payment Method → Order Review**.
+
+---
+
+## 🏗️ Architecture & Design Decisions
+
+### 1. Dual-layer Validation with Server Actions & Zod
+
+All user-submitted data, including shipping addresses and payment-related information, is validated using shared Zod schemas on both the client and server.
+
+Client-side validation provides immediate feedback, while server-side validation inside `Server Actions` ensures that incoming requests are validated independently before being processed.
+
+This approach helps maintain data integrity and prevents invalid or malicious input from reaching the database.
+
+### 2. Low-latency Route Protection with Edge Middleware
+
+Access to private areas such as the checkout and order history is protected at the **Next.js Edge Middleware** layer.
+
+Authentication checks are performed before requests reach protected pages, reducing unnecessary server-side processing while providing a fast and secure user experience.
+
+---
+
+## 📅 Roadmap
+
+- [ ] 💳 **Payment Gateway Integration:** Implement real payment processing using Stripe and PayPal.
+- [ ] 🌍 **Cross-border E-commerce Optimization:** Add multilingual and multi-currency support, automated international shipping cost calculation, and support for country-specific customs, duties, and tax rules.
+- [ ] 📊 **Admin Dashboard:** Build product and inventory management, sales analytics, and order status management.
+- [ ] 👤 **Enhanced User Profiles:** Add detailed order history and shipping address management.
