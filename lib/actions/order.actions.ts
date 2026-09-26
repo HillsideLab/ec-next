@@ -116,7 +116,7 @@ export async function createPayPalOrder(orderId: string){
                     paymentResult:{
                         id: paypalOrder.id,
                         email_address: '',
-                        stauts: '',
+                        status: '',
                         pricePaid: 0,
                     },
                 },
@@ -136,7 +136,7 @@ export async function createPayPalOrder(orderId: string){
 }
 
 // Approve paypal order and update order to paid
-export async function appvovePayPalOrder(
+export async function approvePayPalOrder(
     orderId: string,
     data: { orderID: string }
 ) {
@@ -151,7 +151,7 @@ export async function appvovePayPalOrder(
 
         const captureData = await paypal.capturePayment(data.orderID);
         if(!captureData || captureData.id !== (order.paymentResult as PaymentResult)?.id ||
-        captureData.stauts !== 'COMPLETED'){
+        captureData.status !== 'COMPLETED'){
             throw new Error('Error in PayPal payment');
         }
 
