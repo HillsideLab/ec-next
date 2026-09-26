@@ -60,17 +60,22 @@ export async function createOrder(){
                     },
                 });
             }
-            // Clear cart
-            await tx.cart.update({
-                where:{id: cart.id},
-                data:{
-                    items:[],
-                    totalPrice: 0,
-                    taxPrice: 0,
-                    shippingPrice: 0,
-                    itemsPrice: 0,
-                },
-            });
+
+            // Cash on Deliveryはオンライン決済のステップが無いため、注文作成時点をもって確定とみなし、ここでカートを空にする。
+            // PayPal / Stripeは支払い成功時(updateOrderToPaid)で空にするため、ここでは触らない。
+            if (user.paymentMethod === 'CashOnDelivery') {
+                await tx.cart.update({
+                    where:{id: cart.id},
+                    data:{
+                        items:[],
+                        totalPrice: 0,
+                        taxPrice: 0,
+                        shippingPrice: 0,
+                        itemsPrice: 0,
+                    },
+                });
+            }
+
             return insertedOrder.id;
         });
         if(!insertedOrderId) throw new Error('Order not created');
@@ -200,9 +205,9 @@ async function updateOrderToPaid({
 
     if(order.isPaid) throw new Error('Order is already paid');
 
-    // Transaction to update order and account for product stock
+    // Transaction to update order, stock, and clear the user's cart
     await prisma.$transaction(async(tx)=>{
-        // Iterate over puroducts and update stock
+        // Iterate over products and update stock
         for (const item of order.orderItems){
             await tx.product.update({
                 where: {id: item.productId},
@@ -219,6 +224,24 @@ async function updateOrderToPaid({
                 paymentResult,
             },
         });
+
+        // オンライン決済(PayPal / Stripe)の場合、確定は支払い成功のこのタイミング。ここでその注文を出したユーザーのカートを空にする。
+        // (Cash on Deliveryはcreate Order時点で既に空になっているため、ここで実行しても実質的に何も起きず害はない)
+        const cart = await tx.cart.findFirst({
+            where: { userId: order.userId },
+        });
+        if (cart) {
+            await tx.cart.update({
+                where: { id: cart.id },
+                data: {
+                    items: [],
+                    totalPrice: 0,
+                    taxPrice: 0,
+                    shippingPrice: 0,
+                    itemsPrice: 0,
+                },
+            });
+        }
     });
 
     // Get updated order after transaction
