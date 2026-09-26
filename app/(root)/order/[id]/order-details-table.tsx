@@ -176,7 +176,35 @@ const OrderDetailsTable = ({
               </div>
               {/* PayPal Payment */}
               {!isPaid && paymentMethod === "PayPal" && (
-                <div>
+                <div className="space-y-2">
+                  <div className="rounded-lg border border-[#FFCA28]/50 bg-[#FFCA28]/10 p-4">
+                    <p className="text-center text-sm font-semibold text-[#B77900]">
+                      Demo PayPal Account
+                    </p>
+                    <p className="mt-1 text-xs text-[#B77900]">
+                      This is a demo running in a test (sandbox) environment. No
+                      real charges will occur.
+                      <br />
+                      こちらはデモ環境です。実際の請求は発生いたしませんので、ご安心してお試しください。
+                    </p>
+                    <div className="mt-3 space-y-1 text-sm text-muted-foreground">
+                      <p>
+                        Email:{" "}
+                        <span className="font-medium text-foreground">
+                          demo-user@personal.example.com
+                        </span>
+                      </p>
+                      <p>
+                        Password:{" "}
+                        <span className="font-medium text-foreground">
+                          test1234!
+                        </span>
+                      </p>
+                    </div>
+                    <p className="mt-2 text-xs text-[#B77900]">
+                      上記のメールアドレスとパスワードをそのままご入力の上、ログインしてお進みください。
+                    </p>
+                  </div>
                   <PayPalScriptProvider options={{ clientId: paypalClientId }}>
                     <PrintLoadingState />
                     <PayPalButtons
