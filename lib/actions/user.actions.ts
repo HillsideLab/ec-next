@@ -46,6 +46,8 @@ export async function signOutUser() {
     // 次にこのブラウザを使う人に、前の人のカートが引き継がれないよう
     // 新しい sessionCartId を即座に発行し直す
     (await cookies()).set('sessionCartId', crypto.randomUUID());
+
+    redirect('/'); // ここでリダイレクト。以降の自動refreshは発生しない
 }
 
 //Sign up user
