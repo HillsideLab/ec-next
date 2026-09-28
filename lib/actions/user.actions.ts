@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import { formatError } from "../utils";
 import { prisma } from "@/db/prisma";
 import { ShippingAddress } from "@/types";
-import { z } from 'zod';
+import { success, z } from 'zod';
 
 // Sign in the user with credentials
 export async function signInWithCredentials(prevState: unknown, formData: FormData){
@@ -143,5 +143,28 @@ export async function updateUserPaymentMethod(data: z.infer<typeof paymentMethod
 
     } catch (error) {
         return {success: false, message: formatError(error)};
+    }
+}
+
+// Update the user profile
+export async function updateUserProfile(user:{name:string; email:string;}){
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers(),
+        });
+        const currentUser = await prisma.user.findFirst({
+            where: {id: session?.user?.id}
+        });
+        if(!currentUser) throw new Error('User not found');
+
+        await prisma.user.update({
+            where:{id: currentUser.id},
+            data:{name: user.name},
+        });
+
+        return { success: true, messeage: 'User updated successfully'};
+
+    } catch (error) {
+        return {success: false,  message: formatError(error)};
     }
 }
