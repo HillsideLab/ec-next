@@ -67,6 +67,14 @@ const UserButton = async () => {
             >
               Order History
             </Link>
+            {session?.user.role === "admin" && (
+              <Link
+                href="/admin/overview"
+                className="flex w-full h-8 px-2 items-center"
+              >
+                Admin
+              </Link>
+            )}
 
             <form action={signOutUser} className="w-full">
               <Button
