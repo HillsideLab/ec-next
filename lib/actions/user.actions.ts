@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import { formatError } from "../utils";
 import { prisma } from "@/db/prisma";
 import { ShippingAddress } from "@/types";
-import { success, z } from 'zod';
+import { z } from 'zod';
 
 // Sign in the user with credentials
 export async function signInWithCredentials(prevState: unknown, formData: FormData){
