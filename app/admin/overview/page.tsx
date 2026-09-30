@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
+import Charts from "./charts";
 
 export const metadata: Metadata = {
   title: "Admin Dashboad",
@@ -84,7 +85,13 @@ const AdminOverviewPage = async () => {
         <Card className="border col-span-4">
           <CardHeader>
             <CardTitle>Overview</CardTitle>
-            <CardContent>{/* CHART HERE */}</CardContent>
+            <CardContent>
+              <Charts
+                data={{
+                  salesData: summary.salesData,
+                }}
+              />
+            </CardContent>
           </CardHeader>
         </Card>
         <Card className="border col-span-3">
