@@ -15,18 +15,14 @@ import {
 } from "@/components/ui/table";
 import Link from "next/link";
 import Charts from "./charts";
+import { requireAdmin } from "@/lib/auth-guard";
 
 export const metadata: Metadata = {
   title: "Admin Dashboad",
 };
 
 const AdminOverviewPage = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (session?.user.role !== "admin") {
-    throw new Error("User is not authorized");
-  }
+  await requireAdmin();
 
   const summary = await getOrderSummary();
 
