@@ -11,8 +11,10 @@ import {
   TableRow,
   TableCell,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { toast } from "@/components/ui/toast";
+import { useTransition } from "react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
 import {
@@ -23,7 +25,53 @@ import {
 import {
   createPayPalOrder,
   approvePayPalOrder,
+  updateOrderToPaidCOD,
+  deliverOrder,
 } from "@/lib/actions/order.actions";
+
+// Button to mark order as paid
+const MarkAsPaidButton = ({ orderId }: { orderId: string }) => {
+  const [isPending, startTransition] = useTransition();
+  return (
+    <Button
+      type="button"
+      disabled={isPending}
+      onClick={() =>
+        startTransition(async () => {
+          const res = await updateOrderToPaidCOD(orderId);
+          toast.add({
+            type: res.success ? "success" : "error",
+            description: res.message,
+          });
+        })
+      }
+    >
+      {isPending ? "processing..." : "Mark As Paid"}
+    </Button>
+  );
+};
+
+// Button to mark order as delivered
+const MarkAsDeliveredButton = ({ orderId }: { orderId: string }) => {
+  const [isPending, startTransition] = useTransition();
+  return (
+    <Button
+      type="button"
+      disabled={isPending}
+      onClick={() =>
+        startTransition(async () => {
+          const res = await deliverOrder(orderId);
+          toast.add({
+            type: res.success ? "success" : "error",
+            description: res.message,
+          });
+        })
+      }
+    >
+      {isPending ? "processing..." : "Mark As Delivered"}
+    </Button>
+  );
+};
 
 const PrintLoadingState = () => {
   const [{ isPending, isRejected }] = usePayPalScriptReducer();
@@ -40,9 +88,11 @@ const PrintLoadingState = () => {
 const OrderDetailsTable = ({
   order,
   paypalClientId,
+  isAdmin,
 }: {
   order: Order;
   paypalClientId: string;
+  isAdmin: boolean;
 }) => {
   const {
     shippingAddress,
@@ -213,6 +263,13 @@ const OrderDetailsTable = ({
                     />
                   </PayPalScriptProvider>
                 </div>
+              )}
+              {/* Cash On Delivery */}
+              {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
+                <MarkAsPaidButton orderId={order.id} />
+              )}
+              {isAdmin && isPaid && !isDelivered && (
+                <MarkAsDeliveredButton orderId={order.id} />
               )}
             </CardContent>
           </Card>
