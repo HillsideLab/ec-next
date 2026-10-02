@@ -13,6 +13,10 @@ import slugify from "slugify";
 import { createProduct, updateProduct } from "@/lib/actions/product.actions";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
+import { UploadButton } from "@uploadthing/react";
+import type { OurFileRouter } from "@/app/api/uploadthing/core";
+import { Card, CardContent } from "../ui/card";
+import Image from "next/image";
 
 const ProductForm = ({
   type,
@@ -76,6 +80,8 @@ const ProductForm = ({
       }
     }
   };
+
+  const images = form.watch("images");
 
   return (
     <>
@@ -176,32 +182,43 @@ const ProductForm = ({
             </FieldContent>
           </Field>
         </div>
-        <div className="flex flex-col md:flex-row gap-5">
+        <div className="upload-field flex flex-col md:flex-row gap-5">
           {/* Images */}
-          <Field className="upload-field w-full">
-            <FieldLabel htmlFor="category">Images</FieldLabel>
-            <FieldContent>
-              <Input
-                id="name"
-                placeholder="Enter product category"
-                {...form.register("category")}
-              />
-              <FieldError errors={[form.formState.errors.category]} />
-            </FieldContent>
-          </Field>
-        </div>
-        <div className="flex flex-col md:flex-row gap-5">
-          {/* IsFeatured */}
-          <Field className="upload-field w-full">
-            <FieldLabel htmlFor="category">Images</FieldLabel>
-            <FieldContent>
-              <Input
-                id="name"
-                placeholder="Enter product category"
-                {...form.register("category")}
-              />
-              <FieldError errors={[form.formState.errors.category]} />
-            </FieldContent>
+          <Field className="w-full">
+            <FieldLabel>Images</FieldLabel>
+
+            <Card>
+              <CardContent className="space-y-2 mt-2 min-h-48">
+                <div className="flex-start space-x-2">
+                  {images.map((image: string) => (
+                    <Image
+                      key={image}
+                      src={image}
+                      alt="product image"
+                      className="w-20 h-20 object-cover object-center rounded-sm"
+                      width={100}
+                      height={100}
+                    />
+                  ))}
+
+                  <UploadButton<OurFileRouter, "imageUploader">
+                    endpoint="imageUploader"
+                    onClientUploadComplete={(res) => {
+                      form.setValue("images", [...images, res[0].url]);
+                    }}
+                    onUploadError={(error) => {
+                      toast.add({
+                        title: "Upload Error",
+                        description: error.message,
+                        type: "error",
+                      });
+                    }}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <FieldError errors={[form.formState.errors.images]} />
           </Field>
         </div>
         <div>
