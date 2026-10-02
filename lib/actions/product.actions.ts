@@ -6,7 +6,7 @@ import { PAGE_SIZE } from "../constants";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { insertProductSchema, updateProductSchema } from "../validators";
+import { productSchema } from "../validators";
 import z from "zod";
 
 // Get latest products
@@ -79,9 +79,9 @@ export async function deleteProduct(id: string) {
 }
 
 // Create a product
-export async function createProduct(data: z.infer<typeof insertProductSchema>) {
+export async function createProduct(data: z.infer<typeof productSchema>) {
   try {
-    const product = insertProductSchema.parse(data);
+    const product = productSchema.parse(data);
     await prisma.product.create({ data: product });
 
     revalidatePath("/admin/products");
@@ -96,17 +96,20 @@ export async function createProduct(data: z.infer<typeof insertProductSchema>) {
 }
 
 // Update a product
-export async function updateProduct(data: z.infer<typeof updateProductSchema>) {
+export async function updateProduct(
+  id: string,
+  data: z.infer<typeof productSchema>,
+) {
   try {
-    const product = updateProductSchema.parse(data);
+    const product = productSchema.parse(data);
     const productExists = await prisma.product.findFirst({
-      where: { id: product.id },
+      where: { id },
     });
 
     if (!productExists) throw new Error("Product not found");
 
     await prisma.product.update({
-      where: { id: product.id },
+      where: { id },
       data: product,
     });
 
