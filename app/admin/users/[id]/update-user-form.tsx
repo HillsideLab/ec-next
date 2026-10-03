@@ -35,6 +35,7 @@ const UpdateUserForm = ({
     resolver: zodResolver(updateUserSchema),
     defaultValues: user,
   });
+  const role = form.watch("role");
 
   const onSubmit = async (values: z.infer<typeof updateUserSchema>) => {
     try {
@@ -118,7 +119,11 @@ const UpdateUserForm = ({
               }}
             >
               <SelectTrigger id="role" className="w-full">
-                <SelectValue placeholder="Select a role" />
+                <SelectValue placeholder="Select a role">
+                  {role
+                    ? role.charAt(0).toUpperCase() + role.slice(1)
+                    : undefined}
+                </SelectValue>
               </SelectTrigger>
 
               <SelectContent>
