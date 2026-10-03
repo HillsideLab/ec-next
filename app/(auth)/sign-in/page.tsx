@@ -60,7 +60,7 @@ const SignInPage = async (props: {
               Explore the full purchase flow and selected admin features with
               this demo account.
               <br />
-              こちらのデモ用アカウントで、購入の流れと一部の管理機能をお試しいただけます。
+              こちらのデモ用アカウントで購入の流れと一部の管理機能をお試しいただけます。
             </p>
             <div className="mt-3 space-y-1 text-center text-sm text-muted-foreground">
               <p>

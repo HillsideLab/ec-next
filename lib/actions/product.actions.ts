@@ -66,7 +66,7 @@ export async function deleteProduct(id: string) {
     if (session?.user.name === "Demo User") {
       return {
         success: false,
-        message: "Demo User cannot delete products",
+        message: "Demo User cannot delete a product",
       };
     }
 
@@ -89,6 +89,18 @@ export async function deleteProduct(id: string) {
 // Create a product
 export async function createProduct(data: z.infer<typeof productSchema>) {
   try {
+    // For Demo User
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (session?.user.name === "Demo User") {
+      return {
+        success: false,
+        message: "Demo User cannot create a product",
+      };
+    }
+
     const product = productSchema.parse(data);
     await prisma.product.create({ data: product });
 
@@ -109,6 +121,18 @@ export async function updateProduct(
   data: z.infer<typeof productSchema>,
 ) {
   try {
+    // For Demo User
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (session?.user.name === "Demo User") {
+      return {
+        success: false,
+        message: "Demo User cannot update products",
+      };
+    }
+
     const product = productSchema.parse(data);
     const productExists = await prisma.product.findFirst({
       where: { id },
