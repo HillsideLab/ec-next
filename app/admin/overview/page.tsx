@@ -1,6 +1,4 @@
 import { Metadata } from "next";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { getOrderSummary } from "@/lib/actions/order.actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BadgeDollarSign, Barcode, CreditCard, Users } from "lucide-react";

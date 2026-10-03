@@ -56,11 +56,10 @@ const SignInPage = async (props: {
             <p className="text-center text-sm font-semibold text-[#B77900]">
               Demo Account
             </p>
-            <p className="mt-1 text-left text-xs text-[#B77900]">
-              Explore the full purchase flow and selected admin features with
-              this demo account.
+            <p className="mt-1 text-center text-xs text-[#B77900]">
+              You can log in as an admin with this demo account.
               <br />
-              こちらのデモ用アカウントで購入の流れと一部の管理機能をお試しいただけます。
+              こちらのデモ用アカウントでは、管理者としてログインいただけます。
             </p>
             <div className="mt-3 space-y-1 text-center text-sm text-muted-foreground">
               <p>
