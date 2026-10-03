@@ -57,7 +57,7 @@ const AdminUserPage = async (props: {
                 </TableCell>
                 <TableCell>
                   <Link
-                    href={`admin/user/${user.id}`}
+                    href={`/admin/users/${user.id}`}
                     className={cn(
                       buttonVariants({ variant: "outline", size: "sm" }),
                     )}
