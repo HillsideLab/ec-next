@@ -432,7 +432,7 @@ export async function deliverOrder(orderId: string) {
 
     await prisma.order.update({
       where: { id: orderId },
-      data: { isDelivered: true, paidAt: new Date() },
+      data: { isDelivered: true, deliveredAt: new Date() },
     });
 
     revalidatePath(`/order/${orderId}`);
