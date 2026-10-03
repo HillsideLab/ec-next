@@ -5,6 +5,7 @@ import {
   signInFormSchema,
   signUpFormSchema,
   paymentMethodSchema,
+  updateUserSchema,
 } from "../validators";
 import { auth } from "@/lib/auth";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
@@ -13,7 +14,7 @@ import { redirect } from "next/navigation";
 import { formatError } from "../utils";
 import { prisma } from "@/db/prisma";
 import { ShippingAddress } from "@/types";
-import { success, z } from "zod";
+import { z } from "zod";
 import { PAGE_SIZE } from "../constants";
 import { revalidatePath } from "next/cache";
 
@@ -226,6 +227,43 @@ export async function deleteUser(id: string) {
     return {
       success: true,
       message: "User deleted successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: formatError(error),
+    };
+  }
+}
+
+// Update a user
+export async function updateUser(user: z.infer<typeof updateUserSchema>) {
+  try {
+    // For Demo User
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (session?.user.name === "Demo User") {
+      return {
+        success: false,
+        message: "Demo User cannot update a user",
+      };
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        name: user.name,
+        role: user.role,
+      },
+    });
+
+    revalidatePath("/admin/users");
+
+    return {
+      success: true,
+      message: "User updated successfully",
     };
   } catch (error) {
     return {
