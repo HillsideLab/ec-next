@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { getAllUsers } from "@/lib/actions/user.actions";
+import { deleteUser, getAllUsers } from "@/lib/actions/user.actions";
 import {
   Table,
   TableBody,
@@ -14,6 +14,7 @@ import { buttonVariants } from "@/components/ui/button";
 import Pagination from "@/components/shared/pagination";
 import { Badge } from "@/components/ui/badge";
 import { requireAdmin } from "@/lib/auth-guard";
+import DeleteDialog from "@/components/shared/delete-dialog";
 
 export const metadata: Metadata = {
   title: "Admin Users",
@@ -63,7 +64,7 @@ const AdminUserPage = async (props: {
                   >
                     Edit
                   </Link>
-                  {/* <DeleteDialog id={user.id} action={deleteUser} /> */}
+                  <DeleteDialog id={user.id} action={deleteUser} />
                 </TableCell>
               </TableRow>
             ))}

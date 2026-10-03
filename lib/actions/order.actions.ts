@@ -384,7 +384,7 @@ export async function deleteOrder(id: string) {
     if (session?.user.name === "Demo User") {
       return {
         success: false,
-        message: "Demo User cannot delete orders",
+        message: "Demo User cannot delete an order",
       };
     }
 
