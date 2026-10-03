@@ -16,6 +16,7 @@ import { Textarea } from "../ui/textarea";
 import { UploadButton } from "@uploadthing/react";
 import type { OurFileRouter } from "@/app/api/uploadthing/core";
 import { Card, CardContent } from "../ui/card";
+import { Checkbox } from "../ui/checkbox";
 import Image from "next/image";
 
 const ProductForm = ({
@@ -82,6 +83,8 @@ const ProductForm = ({
   };
 
   const images = form.watch("images");
+  const isFeatured = form.watch("isFeatured");
+  const banner = form.watch("banner");
 
   return (
     <>
@@ -220,6 +223,50 @@ const ProductForm = ({
 
             <FieldError errors={[form.formState.errors.images]} />
           </Field>
+        </div>
+        <div className="upload-field">
+          {/* isFeatured */}
+          Featured Product
+          <Card>
+            <CardContent className="space-y-2 mt-2">
+              <Field orientation="horizontal">
+                <Checkbox
+                  id="isFeatured"
+                  checked={form.watch("isFeatured")}
+                  onCheckedChange={(checked) =>
+                    form.setValue("isFeatured", checked === true)
+                  }
+                />
+                <FieldLabel htmlFor="isFeatured">Is Featured?</FieldLabel>
+              </Field>
+
+              {isFeatured && banner && (
+                <Image
+                  src={banner}
+                  alt="banner image"
+                  className="w-full object-cover object-center rounded-sm"
+                  width={1920}
+                  height={680}
+                />
+              )}
+
+              {isFeatured && !banner && (
+                <UploadButton<OurFileRouter, "imageUploader">
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    form.setValue("banner", res[0].url);
+                  }}
+                  onUploadError={(error) => {
+                    toast.add({
+                      title: "Upload Error",
+                      description: error.message,
+                      type: "error",
+                    });
+                  }}
+                />
+              )}
+            </CardContent>
+          </Card>
         </div>
         <div>
           {/* Description */}
