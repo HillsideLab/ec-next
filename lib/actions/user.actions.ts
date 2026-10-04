@@ -177,7 +177,7 @@ export async function updateUserProfile(user: { name: string; email: string }) {
       data: { name: user.name },
     });
 
-    return { success: true, messeage: "User updated successfully" };
+    return { success: true, message: "User updated successfully" };
   } catch (error) {
     return { success: false, message: formatError(error) };
   }
