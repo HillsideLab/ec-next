@@ -182,7 +182,7 @@ const SearchPage = async (props: {
             rating !== "all" ? (
               <Button
                 variant="link"
-                nativeButton={true}
+                nativeButton={false}
                 render={<Link href="/search">Clear</Link>}
               />
             ) : null}
