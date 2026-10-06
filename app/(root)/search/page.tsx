@@ -146,7 +146,7 @@ const SearchPage = async (props: {
           </ul>
         </div>
         {/* Rating Links */}
-        <div className="text-xl mb-2 mt-8">Customer Reviw</div>
+        <div className="text-xl mb-2 mt-8">Customer Ratings</div>
         <div>
           <ul className="space-y-1">
             <li>
