@@ -31,6 +31,7 @@ const CategroyDrawer = async () => {
             {categories.map((x) => (
               <DrawerClose
                 key={x.category}
+                nativeButton={false}
                 render={<Link href={`/search?category=${x.category}`} />}
               >
                 <Button variant="ghost" className="w-full justify-start">
