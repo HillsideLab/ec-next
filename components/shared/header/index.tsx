@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { APP_NAME } from "@/lib/constants";
 import CategroyDrawer from "./category-drawer";
+import Search from "./search";
 
 const Header = () => {
   return (
@@ -22,6 +23,9 @@ const Header = () => {
               {APP_NAME}
             </span>
           </Link>
+        </div>
+        <div className="hidden md:block">
+          <Search />
         </div>
         <Menu />
       </div>
