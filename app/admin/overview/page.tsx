@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { getOrderSummary } from "@/lib/actions/order.actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BadgeDollarSign, Barcode, CreditCard, Users } from "lucide-react";
+import { BadgeEuro, Barcode, CreditCard, Users } from "lucide-react";
 import { formatCurrency, formatDateTime, formatNumber } from "@/lib/utils";
 import {
   Table,
@@ -31,7 +31,7 @@ const AdminOverviewPage = async () => {
         <Card className="border">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <BadgeDollarSign />
+            <BadgeEuro />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">

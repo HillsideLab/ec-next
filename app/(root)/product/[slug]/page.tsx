@@ -7,7 +7,6 @@ import ProductImages from "@/components/shared/product/product-images";
 import AddToCart from "@/components/shared/product/add-to-cart";
 import { getMyCart } from "@/lib/actions/cart.actions";
 
-
 const ProductDetailsPage = async (props: {
   params: Promise<{ slug: string }>;
 }) => {
@@ -77,8 +76,9 @@ const ProductDetailsPage = async (props: {
                         slug: product.slug,
                         price: product.price,
                         qty: 1,
-                        image: product.images![0]
-                      }}/>
+                        image: product.images![0],
+                      }}
+                    />
                   </div>
                 )}
               </CardContent>
