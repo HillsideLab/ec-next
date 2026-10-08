@@ -12,6 +12,8 @@ import {
 
 export type Product = z.infer<typeof productSchema> & {
   id: string;
+  rating: string;
+  numReviews: number;
   createdAt: Date;
 };
 
