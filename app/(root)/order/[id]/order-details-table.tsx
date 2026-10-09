@@ -28,6 +28,7 @@ import {
   updateOrderToPaidCOD,
   deliverOrder,
 } from "@/lib/actions/order.actions";
+import StrpiePayment from "./stripe-payment";
 
 // Button to mark order as paid
 const MarkAsPaidButton = ({ orderId }: { orderId: string }) => {
@@ -89,10 +90,12 @@ const OrderDetailsTable = ({
   order,
   paypalClientId,
   isAdmin,
+  stripeClientSeceret,
 }: {
   order: Order;
   paypalClientId: string;
   isAdmin: boolean;
+  stripeClientSeceret: string | null;
 }) => {
   const {
     shippingAddress,
@@ -263,6 +266,14 @@ const OrderDetailsTable = ({
                     />
                   </PayPalScriptProvider>
                 </div>
+              )}
+              {/* Stripe Payment */}
+              {!isPaid && paymentMethod === "Stripe" && stripeClientSeceret && (
+                <StrpiePayment
+                  priceInCents={Number(order.totalPrice) * 100}
+                  orderId={order.id}
+                  clientSecret={stripeClientSeceret}
+                />
               )}
               {/* Cash On Delivery */}
               {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
