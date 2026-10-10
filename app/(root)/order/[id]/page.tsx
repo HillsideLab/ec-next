@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { getOrderById } from "@/lib/actions/order.actions";
 import { notFound } from "next/navigation";
 import OrderDetailsTable from "./order-details-table";
-import { ShippingAddress } from "@/types";
+import { PaymentResult, ShippingAddress } from "@/types";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Stripe from "stripe";
@@ -43,6 +43,7 @@ const OrderDetailsPage = async (props: {
       order={{
         ...order,
         shippingAddress: order.shippingAddress as ShippingAddress,
+        paymentResult: order.paymentResult as PaymentResult | null,
       }}
       stripeClientSeceret={client_secret}
       paypalClientId={process.env.PAYPAL_CILENT_ID || "sb"}
