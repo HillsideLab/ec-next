@@ -258,7 +258,12 @@ const OrderDetailsTable = ({
                       上記のメールアドレスとパスワードをそのままご入力の上、ログインしてお進みください。
                     </p>
                   </div>
-                  <PayPalScriptProvider options={{ clientId: paypalClientId }}>
+                  <PayPalScriptProvider
+                    options={{
+                      clientId: paypalClientId,
+                      currency: "EUR",
+                    }}
+                  >
                     <PrintLoadingState />
                     <PayPalButtons
                       createOrder={handleCreatePayPalOrder}
