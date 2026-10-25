@@ -106,11 +106,22 @@ export async function createOrder() {
   }
 }
 
+// Limit order lookups to the signed-in user's own orders (admins can access all)
+async function getOrderAccessFilter(): Promise<Prisma.OrderWhereInput> {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session) throw new Error("User is not authenticated");
+
+  return session.user.role === "admin" ? {} : { userId: session.user.id };
+}
+
 // Get order by id
 export async function getOrderById(orderId: string) {
   const data = await prisma.order.findFirst({
     where: {
       id: orderId,
+      ...(await getOrderAccessFilter()),
     },
     include: {
       orderItems: true,
@@ -127,6 +138,7 @@ export async function createPayPalOrder(orderId: string) {
     const order = await prisma.order.findFirst({
       where: {
         id: orderId,
+        ...(await getOrderAccessFilter()),
       },
     });
     if (order) {
@@ -169,6 +181,7 @@ export async function approvePayPalOrder(
     const order = await prisma.order.findFirst({
       where: {
         id: orderId,
+        ...(await getOrderAccessFilter()),
       },
     });
     if (!order) throw new Error("Order not found");

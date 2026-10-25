@@ -97,6 +97,17 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
 
 // Get user by the ID
 export async function getUserByID(userId: string) {
+  // Only the user themselves or an admin can read the user's data
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (
+    !session ||
+    (session.user.id !== userId && session.user.role !== "admin")
+  ) {
+    throw new Error("Unauthorized");
+  }
+
   const user = await prisma.user.findFirst({
     where: { id: userId },
   });
