@@ -10,7 +10,11 @@ import { productDefaultValues } from "@/lib/constants";
 import { Field, FieldContent, FieldError, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import slugify from "slugify";
-import { createProduct, updateProduct } from "@/lib/actions/product.actions";
+import {
+  createProduct,
+  deleteProductImage,
+  updateProduct,
+} from "@/lib/actions/product.actions";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { UploadButton } from "@uploadthing/react";
@@ -18,6 +22,46 @@ import type { OurFileRouter } from "@/app/api/uploadthing/core";
 import { Card, CardContent } from "../ui/card";
 import { Checkbox } from "../ui/checkbox";
 import Image from "next/image";
+import { XIcon } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import DeleteDialog from "../shared/delete-dialog";
+
+// Deletes an image from UploadThing and the product after confirmation
+const RemoveImageButton = ({
+  url,
+  field,
+  productId,
+  onDeleted,
+}: {
+  url: string;
+  field: "images" | "banner";
+  productId?: string;
+  onDeleted: () => void;
+}) => (
+  <Tooltip>
+    <DeleteDialog
+      id={url}
+      action={(url) => deleteProductImage({ productId, url, field })}
+      onSuccess={onDeleted}
+      trigger={
+        <TooltipTrigger
+          render={
+            <Button
+              type="button"
+              variant="secondary"
+              size="icon-xs"
+              aria-label="Remove image"
+              className="absolute top-0 right-0 size-4 rounded-none rounded-tr-sm rounded-bl-sm"
+            />
+          }
+        >
+          <XIcon className="size-3" />
+        </TooltipTrigger>
+      }
+    />
+    <TooltipContent>Remove image</TooltipContent>
+  </Tooltip>
+);
 
 const ProductForm = ({
   type,
@@ -194,14 +238,27 @@ const ProductForm = ({
               <CardContent className="space-y-2 mt-2 min-h-48">
                 <div className="flex-start space-x-2">
                   {images.map((image: string) => (
-                    <Image
-                      key={image}
-                      src={image}
-                      alt="product image"
-                      className="w-20 h-20 object-cover object-center rounded-sm"
-                      width={100}
-                      height={100}
-                    />
+                    <div key={image} className="relative">
+                      <Image
+                        src={image}
+                        alt="product image"
+                        className="w-20 h-20 object-cover object-center rounded-sm"
+                        width={100}
+                        height={100}
+                      />
+                      <RemoveImageButton
+                        url={image}
+                        field="images"
+                        productId={productId}
+                        onDeleted={() =>
+                          form.setValue(
+                            "images",
+                            form.getValues("images").filter((i) => i !== image),
+                            { shouldValidate: true },
+                          )
+                        }
+                      />
+                    </div>
                   ))}
 
                   <UploadButton<OurFileRouter, "imageUploader">
@@ -241,13 +298,21 @@ const ProductForm = ({
               </Field>
 
               {isFeatured && banner && (
-                <Image
-                  src={banner}
-                  alt="banner image"
-                  className="w-full object-cover object-center rounded-sm"
-                  width={1920}
-                  height={680}
-                />
+                <div className="relative">
+                  <Image
+                    src={banner}
+                    alt="banner image"
+                    className="w-full object-cover object-center rounded-sm"
+                    width={1920}
+                    height={680}
+                  />
+                  <RemoveImageButton
+                    url={banner}
+                    field="banner"
+                    productId={productId}
+                    onDeleted={() => form.setValue("banner", null)}
+                  />
+                </div>
               )}
 
               {isFeatured && !banner && (

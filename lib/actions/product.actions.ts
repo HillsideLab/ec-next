@@ -8,6 +8,19 @@ import { requireAdminAction } from "../auth-guard";
 import { productSchema } from "../validators";
 import z from "zod";
 import { Prisma } from "@/lib/generated/prisma/client";
+import { UTApi } from "uploadthing/server";
+
+// Get the UploadThing file key from a file URL (e.g. https://utfs.io/f/<key>)
+function getUploadThingKey(url: string): string | null {
+  try {
+    const { hostname, pathname } = new URL(url);
+    if (hostname !== "utfs.io" && !hostname.endsWith(".ufs.sh")) return null;
+    return pathname.startsWith("/f/") ? pathname.slice("/f/".length) : null;
+  } catch {
+    // Relative paths such as seed images are not UploadThing files
+    return null;
+  }
+}
 
 // Get latest products
 export async function getLatestProducts() {
@@ -199,6 +212,76 @@ export async function updateProduct(
       success: true,
       message: "Product updated successfully",
     };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+}
+
+// Delete a product image or banner from UploadThing and the product
+export async function deleteProductImage({
+  productId,
+  url,
+  field,
+}: {
+  // Undefined while creating a product: the image is not saved to any product yet
+  productId?: string;
+  url: string;
+  field: "images" | "banner";
+}) {
+  try {
+    const session = await requireAdminAction();
+
+    // For Demo User
+    if (isDemoUser(session.user.id)) {
+      return {
+        success: false,
+        message: "Demo User cannot delete images",
+      };
+    }
+
+    const product = productId
+      ? await prisma.product.findFirst({ where: { id: productId } })
+      : null;
+    if (productId && !product) throw new Error("Product not found");
+
+    // False for an upload that has not been saved to the product yet
+    const isSaved =
+      product &&
+      (field === "images"
+        ? product.images.includes(url)
+        : product.banner === url);
+
+    if (isSaved) {
+      if (field === "images" && product.images.length <= 1) {
+        throw new Error("Product must have at least one image");
+      }
+    } else {
+      // Never delete a file that another product still uses
+      const usedBy = await prisma.product.findFirst({
+        where: { OR: [{ images: { has: url } }, { banner: url }] },
+      });
+      if (usedBy) throw new Error("Image is used by another product");
+    }
+
+    // Delete the file first, so a failure leaves the product unchanged
+    const key = getUploadThingKey(url);
+    if (key) {
+      const { success } = await new UTApi().deleteFiles(key);
+      if (!success) throw new Error("Failed to delete the image file");
+    }
+
+    if (isSaved) {
+      await prisma.product.update({
+        where: { id: product.id },
+        data:
+          field === "images"
+            ? { images: product.images.filter((image) => image !== url) }
+            : { banner: null },
+      });
+      revalidatePath("/admin/products");
+    }
+
+    return { success: true, message: "Image deleted successfully" };
   } catch (error) {
     return { success: false, message: formatError(error) };
   }
