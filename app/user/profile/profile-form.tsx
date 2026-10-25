@@ -10,11 +10,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { toast } from "@/components/ui/toast";
+import { useRouter } from "next/navigation";
 
 export const ProfileForm = ({
   user,
+  isDemoUser,
 }: {
   user: { name: string; email: string };
+  isDemoUser: boolean;
 }) => {
   const form = useForm<z.infer<typeof updateProfileSchema>>({
     resolver: zodResolver(updateProfileSchema),
@@ -24,15 +27,17 @@ export const ProfileForm = ({
     },
   });
 
+  const router = useRouter();
+
   const onSubmit = async (values: z.infer<typeof updateProfileSchema>) => {
     // Prevent changes to the demo account
-    if (user.name === "Demo User") {
+    if (isDemoUser) {
       toast.add({
         type: "error",
         description: "Demo User cannot be changed.",
       });
       form.reset({
-        name: "Demo User",
+        name: user.name,
         email: user.email ?? "",
       });
       return;
@@ -45,6 +50,10 @@ export const ProfileForm = ({
         ? (error.message ?? "Failed to update profile")
         : "Profile updated successfully",
     });
+
+    if (!error) {
+      router.refresh();
+    }
   };
 
   return (

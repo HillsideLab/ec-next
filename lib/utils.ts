@@ -153,3 +153,14 @@ export function formUrlQuery({
     },
   );
 }
+
+// Check whether the specified user is the Demo User
+export function isDemoUser(userId: string): boolean {
+  const demoUserId = process.env.DEMO_USER_ID;
+
+  if (!demoUserId) {
+    throw new Error("DEMO_USER_ID is not configured");
+  }
+
+  return userId === demoUserId;
+}

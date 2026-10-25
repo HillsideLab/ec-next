@@ -1,5 +1,5 @@
 "use server";
-import { convertToPlainObject, formatError } from "../utils";
+import { convertToPlainObject, formatError, isDemoUser } from "../utils";
 import { LATEST_PRODUCTS_LIMIT } from "../constants";
 import { prisma } from "@/db/prisma";
 import { PAGE_SIZE } from "../constants";
@@ -118,7 +118,7 @@ export async function deleteProduct(id: string) {
       headers: await headers(),
     });
 
-    if (session?.user.name === "Demo User") {
+    if (session && isDemoUser(session.user.id)) {
       return {
         success: false,
         message: "Demo User cannot delete a product",
@@ -149,7 +149,7 @@ export async function createProduct(data: z.infer<typeof productSchema>) {
       headers: await headers(),
     });
 
-    if (session?.user.name === "Demo User") {
+    if (session && isDemoUser(session.user.id)) {
       return {
         success: false,
         message: "Demo User cannot create a product",
@@ -181,7 +181,7 @@ export async function updateProduct(
       headers: await headers(),
     });
 
-    if (session?.user.name === "Demo User") {
+    if (session && isDemoUser(session.user.id)) {
       return {
         success: false,
         message: "Demo User cannot update products",

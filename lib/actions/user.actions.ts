@@ -11,7 +11,7 @@ import { auth } from "@/lib/auth";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { formatError } from "../utils";
+import { formatError, isDemoUser } from "../utils";
 import { prisma } from "@/db/prisma";
 import { ShippingAddress } from "@/types";
 import { z } from "zod";
@@ -226,7 +226,7 @@ export async function deleteUser(id: string) {
       headers: await headers(),
     });
 
-    if (session?.user.name === "Demo User") {
+    if (session && isDemoUser(session.user.id)) {
       return {
         success: false,
         message: "Demo User cannot delete a user",
@@ -259,7 +259,7 @@ export async function updateUser(user: z.infer<typeof updateUserSchema>) {
       headers: await headers(),
     });
 
-    if (session?.user.name === "Demo User") {
+    if (session && isDemoUser(session.user.id)) {
       return {
         success: false,
         message: "Demo User cannot update a user",

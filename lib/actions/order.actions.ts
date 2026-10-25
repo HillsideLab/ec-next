@@ -1,7 +1,7 @@
 "use server";
 
 import { isRedirectError } from "next/dist/client/components/redirect-error";
-import { convertToPlainObject, formatError } from "../utils";
+import { convertToPlainObject, formatError, isDemoUser } from "../utils";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getMyCart } from "./cart.actions";
@@ -407,7 +407,7 @@ export async function deleteOrder(id: string) {
       headers: await headers(),
     });
 
-    if (session?.user.name === "Demo User") {
+    if (session && isDemoUser(session.user.id)) {
       return {
         success: false,
         message: "Demo User cannot delete an order",

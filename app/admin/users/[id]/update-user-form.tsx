@@ -26,8 +26,10 @@ import { updateUser } from "@/lib/actions/user.actions";
 
 const UpdateUserForm = ({
   user,
+  isDemoUser,
 }: {
   user: z.infer<typeof updateUserSchema>;
+  isDemoUser: boolean;
 }) => {
   const router = useRouter();
 
@@ -50,7 +52,7 @@ const UpdateUserForm = ({
           description: res.message,
         });
         // For Demo User
-        if (user.name === "Demo User") {
+        if (isDemoUser) {
           form.reset();
         }
         return;
