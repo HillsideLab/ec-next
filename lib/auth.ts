@@ -4,7 +4,20 @@ import { nextCookies } from "better-auth/next-js"
 import { PrismaClient } from "@/lib/generated/prisma/client"
 import { PrismaPg } from "@prisma/adapter-pg"
 import { customSession } from "better-auth/plugins";
-import { createAuthMiddleware } from "better-auth/api";
+import {
+  APIError,
+  createAuthMiddleware,
+  getSessionFromCtx,
+} from "better-auth/api";
+import { isDemoUser } from "@/lib/utils";
+
+// Account endpoints the demo user must not be able to call
+const demoProtectedPaths = [
+  "/update-user",
+  "/change-email",
+  "/change-password",
+  "/delete-user",
+];
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
@@ -24,6 +37,16 @@ export const auth = betterAuth({
     },
   },
   hooks: {
+    before: createAuthMiddleware(async (ctx) => {
+      if (!demoProtectedPaths.includes(ctx.path)) return;
+
+      const session = await getSessionFromCtx(ctx);
+      if (session && isDemoUser(session.user.id)) {
+        throw new APIError("FORBIDDEN", {
+          message: "The demo account cannot be modified.",
+        });
+      }
+    }),
     after: createAuthMiddleware(async (ctx) => {
       if (ctx.path.startsWith("/sign-in") || ctx.path.startsWith("/sign-up")) {
         const newSession = ctx.context.newSession;

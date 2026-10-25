@@ -34,7 +34,7 @@ export const ProfileForm = ({
     if (isDemoUser) {
       toast.add({
         type: "error",
-        description: "Demo User cannot be changed.",
+        description: "The demo account cannot be modified.",
       });
       form.reset({
         name: user.name,
