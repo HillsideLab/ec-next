@@ -12,6 +12,7 @@ import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { formatError, isDemoUser } from "../utils";
+import { requireAdminAction } from "../auth-guard";
 import { prisma } from "@/db/prisma";
 import { ShippingAddress } from "@/types";
 import { z } from "zod";
@@ -193,6 +194,8 @@ export async function getAllUsers({
   page: number;
   query: string;
 }) {
+  await requireAdminAction();
+
   const queryFilter: Prisma.UserWhereInput =
     query && query !== "all"
       ? {
@@ -221,12 +224,10 @@ export async function getAllUsers({
 // Delete a user
 export async function deleteUser(id: string) {
   try {
-    // For Demo User
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await requireAdminAction();
 
-    if (session && isDemoUser(session.user.id)) {
+    // For Demo User
+    if (isDemoUser(session.user.id)) {
       return {
         success: false,
         message: "Demo User cannot delete a user",
@@ -254,12 +255,10 @@ export async function deleteUser(id: string) {
 // Update a user
 export async function updateUser(user: z.infer<typeof updateUserSchema>) {
   try {
-    // For Demo User
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await requireAdminAction();
 
-    if (session && isDemoUser(session.user.id)) {
+    // For Demo User
+    if (isDemoUser(session.user.id)) {
       return {
         success: false,
         message: "Demo User cannot update a user",

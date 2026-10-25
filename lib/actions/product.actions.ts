@@ -4,8 +4,7 @@ import { LATEST_PRODUCTS_LIMIT } from "../constants";
 import { prisma } from "@/db/prisma";
 import { PAGE_SIZE } from "../constants";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { requireAdminAction } from "../auth-guard";
 import { productSchema } from "../validators";
 import z from "zod";
 import { Prisma } from "@/lib/generated/prisma/client";
@@ -113,12 +112,10 @@ export async function getAllProducts({
 // Delete a product
 export async function deleteProduct(id: string) {
   try {
-    // For Demo User
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await requireAdminAction();
 
-    if (session && isDemoUser(session.user.id)) {
+    // For Demo User
+    if (isDemoUser(session.user.id)) {
       return {
         success: false,
         message: "Demo User cannot delete a product",
@@ -144,12 +141,10 @@ export async function deleteProduct(id: string) {
 // Create a product
 export async function createProduct(data: z.infer<typeof productSchema>) {
   try {
-    // For Demo User
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await requireAdminAction();
 
-    if (session && isDemoUser(session.user.id)) {
+    // For Demo User
+    if (isDemoUser(session.user.id)) {
       return {
         success: false,
         message: "Demo User cannot create a product",
@@ -176,12 +171,10 @@ export async function updateProduct(
   data: z.infer<typeof productSchema>,
 ) {
   try {
-    // For Demo User
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await requireAdminAction();
 
-    if (session && isDemoUser(session.user.id)) {
+    // For Demo User
+    if (isDemoUser(session.user.id)) {
       return {
         success: false,
         message: "Demo User cannot update products",

@@ -8,12 +8,13 @@ import { getMyCart } from "./cart.actions";
 import { getUserByID } from "./user.actions";
 import { insertOrderSchema } from "../validators";
 import { prisma } from "@/db/prisma";
-import { CartItem, PaymentResult, ShippingAddress } from "@/types";
+import { CartItem, PaymentResult } from "@/types";
 import { paypal } from "../paypal";
 import { revalidatePath } from "next/cache";
 import { PAGE_SIZE } from "../constants";
 import { Prisma } from "../generated/prisma/client";
-import { sendPurchaseReceipt } from "@/email";
+import { requireAdminAction } from "../auth-guard";
+import { updateOrderToPaid } from "../order-payment";
 
 // Create order and create order items
 export async function createOrder() {
@@ -204,85 +205,6 @@ export async function approvePayPalOrder(
   }
 }
 
-// Update order to paid
-export async function updateOrderToPaid({
-  orderId,
-  paymentResult,
-}: {
-  orderId: string;
-  paymentResult?: PaymentResult;
-}) {
-  // Get order from database
-  const order = await prisma.order.findFirst({
-    where: {
-      id: orderId,
-    },
-    include: {
-      orderItems: true,
-    },
-  });
-  if (!order) throw new Error("Order not found");
-
-  if (order.isPaid) throw new Error("Order is already paid");
-
-  // Transaction to update order, stock, and clear the user's cart
-  await prisma.$transaction(async (tx) => {
-    // Iterate over products and update stock
-    for (const item of order.orderItems) {
-      await tx.product.update({
-        where: { id: item.productId },
-        data: { stock: { increment: -item.qty } },
-      });
-    }
-
-    // Set the order to paid
-    await tx.order.update({
-      where: { id: orderId },
-      data: {
-        isPaid: true,
-        paidAt: new Date(),
-        paymentResult,
-      },
-    });
-
-    // オンライン決済(PayPal / Stripe)の場合、確定は支払い成功のこのタイミング。ここでその注文を出したユーザーのカートを空にする。
-    // (Cash on Deliveryはcreate Order時点で既に空になっているため、ここで実行しても実質的に何も起きず害はない)
-    const cart = await tx.cart.findFirst({
-      where: { userId: order.userId },
-    });
-    if (cart) {
-      await tx.cart.update({
-        where: { id: cart.id },
-        data: {
-          items: [],
-          totalPrice: 0,
-          taxPrice: 0,
-          shippingPrice: 0,
-          itemsPrice: 0,
-        },
-      });
-    }
-  });
-
-  // Get updated order after transaction
-  const updatedOrder = await prisma.order.findFirst({
-    where: { id: orderId },
-    include: {
-      orderItems: true,
-      user: { select: { name: true, email: true } },
-    },
-  });
-  if (!updatedOrder) throw new Error("Order not found");
-
-  sendPurchaseReceipt({
-    order: {
-      ...updatedOrder,
-      shippingAddress: updatedOrder.shippingAddress as ShippingAddress,
-      paymentResult: updatedOrder.paymentResult as PaymentResult,
-    },
-  });
-}
-
 // Get user's orders
 export async function getMyOrders({
   limit = PAGE_SIZE,
@@ -320,6 +242,8 @@ type SalesDataType = {
 
 // Get sales data and order summary
 export async function getOrderSummary() {
+  await requireAdminAction();
+
   // Get counts for each resource
   const ordersCount = await prisma.order.count();
   const productsCount = await prisma.product.count();
@@ -369,6 +293,8 @@ export async function getAllOrders({
   page: number;
   query: string;
 }) {
+  await requireAdminAction();
+
   const queryFilter: Prisma.OrderWhereInput =
     query && query !== "all"
       ? {
@@ -402,12 +328,10 @@ export async function getAllOrders({
 // Delete an order
 export async function deleteOrder(id: string) {
   try {
-    // For Demo User
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await requireAdminAction();
 
-    if (session && isDemoUser(session.user.id)) {
+    // For Demo User
+    if (isDemoUser(session.user.id)) {
       return {
         success: false,
         message: "Demo User cannot delete an order",
@@ -435,6 +359,8 @@ export async function deleteOrder(id: string) {
 // Update COD order to paid
 export async function updateOrderToPaidCOD(orderId: string) {
   try {
+    await requireAdminAction();
+
     await updateOrderToPaid({ orderId });
 
     revalidatePath(`/order/${orderId}`);
@@ -448,6 +374,8 @@ export async function updateOrderToPaidCOD(orderId: string) {
 // Update COD order to delivered
 export async function deliverOrder(orderId: string) {
   try {
+    await requireAdminAction();
+
     const order = await prisma.order.findFirst({
       where: { id: orderId },
     });

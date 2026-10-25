@@ -12,3 +12,15 @@ export async function requireAdmin(){
 
   return session;
 }
+
+// For server actions: throw instead of redirecting so the action can return an error
+export async function requireAdminAction() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session || session.user.role !== "admin") {
+    throw new Error("Unauthorized");
+  }
+
+  return session;
+}
